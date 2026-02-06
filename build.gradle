@@ -1,12 +1,30 @@
 plugins {
     id 'java'
+    id 'jacoco'
     id "org.xbib.gradle.plugin.jflex" version "1.7.0"
     id 'org.hvb.java-cup' version '0.1.2'
 }
 
 // In this section you declare where to find the dependencies of your project
 repositories {
+    // You can declare any Maven/Ivy/file repository here.
     mavenCentral()
+}
+
+configurations {
+    // configuration pour cup
+    // cupGeneration
+    // configuration pour JFlex
+    // jflexGeneration
+}
+
+dependencies {
+    // Use JUnit Jupiter API for testing.
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.14.2'
+
+    // Use JUnit Jupiter Engine for testing.
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
 }
 
 sourceSets {
@@ -25,6 +43,8 @@ sourceSets {
 
 jflex {
     no_backup = true
+    verbose = true
+    encoding = 'UTF-8'
 }
 
 cup {
@@ -38,16 +58,7 @@ cup {
 compileJava.options.encoding = 'UTF-8'
 
 jar {
-    manifest {
-        attributes  'Main-Class': 'fr.usmb.compilation.Main'
-    }
-}
-
-task fatJar(type: Jar, group: 'build'){
-    archiveClassifier = 'fat'
-    from sourceSets.main.output
-    dependsOn configurations.runtimeClasspath
-    // on ajoute les dependances, ie le runtime cup
+    // on ajoute le runtime cup
     // car on en a besoin pour faire tourner l'analyseur
     from {
         configurations.runtimeClasspath.collect {
@@ -55,13 +66,27 @@ task fatJar(type: Jar, group: 'build'){
         }
     }
     manifest {
-        attributes  'Main-Class': 'fr.usmb.compilation.Main'
+        attributes  'Main-Class': 'fr.usmb.m1isc.compilation.examen.eqn.Main'
     }
 }
 
 tasks.named('build') {
-    dependsOn fatJar
     mustRunAfter clean
+}
+
+tasks.named('test', Test) {
+    // utilisation de JUnit 5 pour les tests
+    useJUnitPlatform()
+    // show test results
+    testLogging.events("passed", "skipped", "failed")
+}
+
+tasks.named("jacocoTestReport", JacocoReport) {
+    dependsOn test
+    reports {
+        xml.required = true
+        html.required = true
+    }
 }
 
 // on configure le plugin eclipse s'il est actif

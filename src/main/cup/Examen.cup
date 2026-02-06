@@ -1,0 +1,47 @@
+/* package et imports */
+package fr.usmb.compilation.examen.eqn;
+
+import java_cup.runtime.Symbol;
+import fr.usmb.compilation.examen.eqn.Arbre.NodeType;
+// nom de la classe a generer
+//class SimpleParser;
+
+/* inclusion du code */
+
+action code {:
+    // pour utilisation dans les actions (classe action)
+:};
+
+
+parser code {:
+:};
+
+ init with {:
+    // initialisation du parser
+:};
+
+/* symboles terminaux */
+terminal SUB, SUP, BAR, FOR, TO, GAUCHE, DROITE, SIZE;
+terminal String  TEXT, INT;
+
+/* non terminaux */
+non terminal Arbre expr, exp1, exp2, exp3 ;
+
+/* grammaire */
+
+expr    ::=  exp1:l expr:r                      {: RESULT = new Arbre(NodeType.SEQ, l, r); :}
+          |  exp1:e                             {: RESULT = e; :}
+          ;
+exp1    ::=  exp2:e1 FOR expr:e2 TO exp2:e3     {: RESULT = new Arbre(NodeType.FOR, e1, new Arbre(NodeType.TO, e2, e3)); :}
+          |  exp2:e                             {: RESULT = e; :}
+          ;
+exp2    ::=  exp3:l SUP exp2:r                  {: RESULT = new Arbre(NodeType.SUP, l, r); :}
+          |  exp3:l SUB exp2:r                  {: RESULT = new Arbre(NodeType.SUB, l, r); :}
+          |  exp3:e                             {: RESULT = e; :}
+          ;
+exp3    ::=  BAR exp3:e                         {: RESULT = new Arbre(NodeType.BAR, e); :}
+          |  SIZE INT:v exp3:r                  {: RESULT = new Arbre(NodeType.SIZE, v, r); :}
+          |  GAUCHE expr:e DROITE               {: RESULT = e; :}
+          |  TEXT:v                             {: RESULT = new Arbre(NodeType.TEXT, v); :}
+          |  INT:v                              {: RESULT = new Arbre(NodeType.TEXT, v); :}
+          ;

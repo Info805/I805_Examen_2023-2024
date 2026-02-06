@@ -1,11 +1,11 @@
 pluginManagement {
     repositories {
+        gradlePluginPortal()
         maven {
           // cup plugin repository
-          url 'https://gitlab.com/api/v4/projects/35519225/packages/maven'
+          url = 'https://gitlab.com/api/v4/projects/35519225/packages/maven'
         }
-        gradlePluginPortal()
     }
 }
 
-// rootProject.name = 'I805_JFLEX_CUP'
+// rootProject.name = 'Examen_eqn'

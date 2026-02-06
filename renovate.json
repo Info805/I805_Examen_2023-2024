@@ -1,18 +1,8 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:recommended"
-  ],
-  "separateMultipleMajor": true,
-  "packageRules": [
-    {
-      "description": "Automerge gradle wrapper monthly",
-      "automergeSchedule": [ "* 0-12 1 * *"],
-      "platformAutomerge": false,
-      "automerge": true,
-      "matchDatasources": ["gradle-version"],
-      "matchUpdateTypes": ["minor", "patch", "digest"],
-      "prPriority": 5
-    }
+      "config:recommended",
+      "local>stalb/renovatebot//presets/java",
+      ":assignee(stalb)"
   ]
 }
