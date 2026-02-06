@@ -25,23 +25,24 @@ terminal SUB, SUP, BAR, FOR, TO, GAUCHE, DROITE, SIZE;
 terminal String  TEXT, INT;
 
 /* non terminaux */
-non terminal Arbre expr, exp1, exp2, exp3 ;
+non terminal Arbre expr, seq;
+
+precedence nonassoc FOR, TO;
+precedence right SUP, SUB;
+precedence right BAR;
+precedence right SIZE;
 
 /* grammaire */
 
-expr    ::=  exp1:l expr:r                      {: RESULT = new Arbre(NodeType.SEQ, l, r); :}
-          |  exp1:e                             {: RESULT = e; :}
+seq     ::=  expr:l seq:r                       {: RESULT = new Arbre(NodeType.SEQ, l, r); :}
+          |  expr:e                             {: RESULT = e; :}
           ;
-exp1    ::=  exp2:e1 FOR expr:e2 TO exp2:e3     {: RESULT = new Arbre(NodeType.FOR, e1, new Arbre(NodeType.TO, e2, e3)); :}
-          |  exp2:e                             {: RESULT = e; :}
-          ;
-exp2    ::=  exp3:l SUP exp2:r                  {: RESULT = new Arbre(NodeType.SUP, l, r); :}
-          |  exp3:l SUB exp2:r                  {: RESULT = new Arbre(NodeType.SUB, l, r); :}
-          |  exp3:e                             {: RESULT = e; :}
-          ;
-exp3    ::=  BAR exp3:e                         {: RESULT = new Arbre(NodeType.BAR, e); :}
-          |  SIZE INT:v exp3:r                  {: RESULT = new Arbre(NodeType.SIZE, v, r); :}
-          |  GAUCHE expr:e DROITE               {: RESULT = e; :}
+expr    ::=  expr:e1 FOR seq:e2 TO expr:e3      {: RESULT = new Arbre(NodeType.FOR, e1, new Arbre(NodeType.TO, e2, e3)); :}
+          |  expr:l SUP expr:r                  {: RESULT = new Arbre(NodeType.SUP, l, r); :}
+          |  expr:l SUB expr:r                  {: RESULT = new Arbre(NodeType.SUB, l, r); :}
+          |  BAR expr:e                         {: RESULT = new Arbre(NodeType.BAR, e); :}
+          |  SIZE INT:v expr:r                  {: RESULT = new Arbre(NodeType.SIZE, v, r); :} %prec SIZE
+          |  GAUCHE seq:e DROITE                {: RESULT = e; :}
           |  TEXT:v                             {: RESULT = new Arbre(NodeType.TEXT, v); :}
           |  INT:v                              {: RESULT = new Arbre(NodeType.TEXT, v); :}
           ;
