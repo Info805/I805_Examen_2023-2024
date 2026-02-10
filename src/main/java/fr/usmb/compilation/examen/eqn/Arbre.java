@@ -70,7 +70,9 @@ public class Arbre {
         case SUP :
         case FOR :
             if (this.fg != null) currentSize = this.fg.calcSize(currentSize);
-            if (this.fd != null) this.fd.calcSize(currentSize * 2 / 3);
+            // if (this.fd != null) this.fd.calcSize(currentSize * 2 / 3);
+            // Arrondi a l'entier sup
+            if (this.fd != null) this.fd.calcSize((currentSize * 2 + 2) / 3);
             this.size = currentSize;
             break;
         case SEQ :
